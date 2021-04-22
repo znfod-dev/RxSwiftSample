@@ -12,6 +12,7 @@ import RxCocoa
 class ViewModel: NSObject {
     
     let disposeBag = DisposeBag()
+    var list = ModelManager.shared.allModels
     
     override init() {
         super.init()

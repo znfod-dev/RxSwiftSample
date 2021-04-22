@@ -17,6 +17,14 @@ class EditViewController: UIViewController {
     
     var viewModel = EditViewModel()
     
+    func setModel(subject:BehaviorRelay<Model>) {
+        viewModel.subject = subject
+    }
+    
+}
+
+// MARK: - View LifeCycle
+extension EditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
@@ -28,6 +36,13 @@ class EditViewController: UIViewController {
 // MARK: - Setup
 extension EditViewController {
     func setupUI() {
+        viewModel.subject?.asObservable()
+            .subscribe(onNext: { [weak self] value in
+                self?.nameTextField.text = value.name
+                self?.capitalTextField.text = value.capital
+            })
+            .disposed(by: viewModel.disposeBag)
+        
         nameTextField.rx.text.subscribe(onNext: { [unowned self] value in
             if let val = value {
                 viewModel.subject.value.name = val
@@ -38,7 +53,6 @@ extension EditViewController {
         capitalTextField.rx.text.subscribe(onNext: { [unowned self] value in
             if let val = value {
                 viewModel.subject.value.capital = val
-                viewModel.subject.accept(viewModel.subject.value)
             }
         })
         .disposed(by: viewModel.disposeBag)
@@ -46,6 +60,7 @@ extension EditViewController {
         saveBtn.rx.tap.asObservable()
             .subscribe(onNext: {
                 self.viewModel.subject.accept(self.viewModel.subject.value)
+                self.navigationController?.popViewController(animated: true)
             })
             .disposed(by: viewModel.disposeBag)
     }

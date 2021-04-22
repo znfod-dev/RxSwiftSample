@@ -28,6 +28,7 @@ class DetailViewController: UIViewController {
 extension DetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("DetailViewController viewDidLoad")
         self.setupUI()
         
     }
@@ -42,12 +43,16 @@ extension DetailViewController {
                 self?.nameLabel.text = value.name
                 self?.capitalLabel.text = value.capital
                 self?.countLabel.text = String(value.count)
+                self?.countStepper.value = Double(value.count)
             })
             .disposed(by: viewModel.disposeBag)
         
+        
         editBtn.rx.tap.asObservable()
             .subscribe(onNext: {
-                
+                let vc = self.storyboard?.instantiateViewController(identifier: "EditViewController") as! EditViewController
+                vc.setModel(subject: self.viewModel.subject)
+                self.navigationController?.pushViewController(vc, animated: true)
             })
             .disposed(by: viewModel.disposeBag)
         
