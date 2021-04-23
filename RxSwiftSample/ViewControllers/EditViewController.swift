@@ -43,23 +43,26 @@ extension EditViewController {
             })
             .disposed(by: viewModel.disposeBag)
         
-        nameTextField.rx.text.subscribe(onNext: { [unowned self] value in
+        nameTextField.rx.text.subscribe(onNext: { [weak self] value in
             if let val = value {
-                viewModel.subject.value.name = val
+                self?.viewModel.subject.value.name = val
             }
         })
         .disposed(by: viewModel.disposeBag)
         
-        capitalTextField.rx.text.subscribe(onNext: { [unowned self] value in
+        capitalTextField.rx.text.subscribe(onNext: { [weak self] value in
             if let val = value {
-                viewModel.subject.value.capital = val
+                self?.viewModel.subject.value.capital = val
             }
         })
         .disposed(by: viewModel.disposeBag)
         
         saveBtn.rx.tap.asObservable()
             .subscribe(onNext: {
-                self.viewModel.subject.accept(self.viewModel.subject.value)
+                if let _ = ModelManager.shared.allModels.value.first(where: { $0 == self.viewModel.subject.value }) {
+                    self.viewModel.subject.accept(self.viewModel.subject.value)
+                }
+                ModelManager.shared.allModels.accept(ModelManager.shared.allModels.value)
                 self.navigationController?.popViewController(animated: true)
             })
             .disposed(by: viewModel.disposeBag)

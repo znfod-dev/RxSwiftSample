@@ -33,16 +33,17 @@ extension AddViewController {
 // MARK: - Setup
 extension AddViewController {
     func setupUI() {
-        nameTextField.rx.text.subscribe(onNext: { [unowned self] value in
+        nameTextField.rx.text.subscribe(onNext: { [weak self] value in
             if let val = value {
-                viewModel.model.name = val
+                self?.viewModel.model.name = val
             }
         })
         .disposed(by: viewModel.disposeBag)
         
-        capitalTextField.rx.text.subscribe(onNext: { [unowned self] value in
+        capitalTextField.rx.text.subscribe(onNext: { [weak self] value in
             if let val = value {
-                viewModel.model.capital = val
+                print("val : \(val)")
+                self?.viewModel.model.capital = val
             }
         })
         .disposed(by: viewModel.disposeBag)

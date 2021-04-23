@@ -65,10 +65,10 @@ extension DetailViewController {
         self.countStepper.maximumValue = 100
         self.countStepper.minimumValue = 0
         
-        self.countStepper.rx.value.subscribe(onNext: { [unowned self] value in
-            if let md = ModelManager.shared.allModels.value.first(where: { $0 == self.viewModel.subject.value }) {
+        self.countStepper.rx.value.subscribe(onNext: { [weak self] value in
+            if let md = ModelManager.shared.allModels.value.first(where: { $0 == self?.viewModel.subject.value }) {
                 md.count = Int(value)
-                self.viewModel.subject.accept(md)
+                self?.viewModel.subject.accept(md)
             }
             ModelManager.shared.allModels.accept(ModelManager.shared.allModels.value)
         })
